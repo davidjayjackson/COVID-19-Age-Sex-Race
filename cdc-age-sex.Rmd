@@ -18,6 +18,7 @@ theme_set(theme_linedraw())
 ## R Markdown
 
 ```{r}
+rm(list=ls())
 df <- read.csv("../DATA/cdc-age-sex.csv")
 df <- df[c(4:8)]
 colnames(df) <- c("Date","sex","Age","Deaths","Covid")
@@ -34,7 +35,7 @@ not_all <- subset(df,Age !="All ages")
 
 ```{r}
 not_age_week <- aggregate(Covid~Age+Ymd,data=not_all,FUN=sum)
-not_age_week <- subset(not_age_week,Ymd >="2020-06-15")
+not_age_week <- subset(not_age_week,Ymd >="2020-08-25")
 ```
 
 ### Plot of COVID-19 Deaths by Age Group
@@ -51,7 +52,9 @@ ggplot(not_age_week) +geom_line(aes(x=Ymd,y=Covid,col=Age)) +
 ```{r}
 mydata = subset(not_age_week,Age %in% c("65-74 years","75-84 years","85 years and over"))
 ```
+
 # Plots by Selected Age Groups: 65 - 85 Year of Age
+
 ```{r}
 ggplot(mydata) +geom_line(aes(x=Ymd,y=Covid,col=Age)) +
   scale_x_date(date_breaks = "2 week") +
@@ -59,6 +62,15 @@ ggplot(mydata) +geom_line(aes(x=Ymd,y=Covid,col=Age)) +
   labs(title="Plot of COVID-19 Deaths for Ages 64 and Over",
        x="Date",y="Covid-19 Deaths",
        caption = "(Source: US CDC)")
+
+```
+```{r}
+Sept4 <- subset(not_age_week,Ymd >="2020-08-30")
+ggplot(Sept4) + geom_col(aes(x=Age,y=Covid)) +
+  theme(axis.text.x = element_text(angle = 45)) +
+  labs(title = "Total Deaths by Age Group",
+  subtitle="for Week of Aug.30 - Sept. 4", caption = "(Source US CDC)"
+  )
 
 ```
 
