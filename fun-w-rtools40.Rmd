@@ -1,0 +1,27 @@
+---
+title: "Fun-w-Rtools40"
+author: "David Jackson"
+date: "8/30/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+US_Age <- read.csv("../DATA/us_other.csv",header=FALSE)
+colnames(US_Age) <- c("Country","Sex","Age","Deaths" )
+```
+```{r}
+plot(US_Age$Deaths,US_Age$Ages,type="l")
+```
+
+```{r}
+library(ggplot2)
+
+ggplot(US_Age) + geom_col(aes(x=Age,y=Deaths,fill=Sex)) + coord_flip()
+```
+```{r}
+ggplot(US_Age) + geom_col(aes(x=Sex,y=Deaths,fill=Age)) + coord_flip()
+```
+

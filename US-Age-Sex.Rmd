@@ -14,12 +14,16 @@ library(lubridate)
 ```
 ```{r}
 rm(list=ls())
-CDCAge <- data.table::fread("DATA/COVID-19_Death_Counts.csv")
+CDCAge <- data.table::fread("../DATA/Provisional__Sex__Age.csv")
 CDCAge <- janitor::clean_names(CDCAge)
-CDCAge$data_as_of <- mdy(CDCAge$data_as_of)
-CDCAge$start_week <- mdy(CDCAge$start_week)
-CDCAge$end_week <- mdy(CDCAge$end_week)
+
 ```
+```{r}
+US <- grep("United States",CDCAge)
+```
+
+
+
 ```{r}
 CDCAge %>% filter(age_group != "All ages" & sex != "All") %>%
 ggplot() + geom_col(aes(x=age_group,y=total_deaths)) +
