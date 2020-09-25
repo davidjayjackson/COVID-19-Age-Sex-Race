@@ -19,14 +19,13 @@ theme_set(theme_linedraw())
 
 ```{r}
 rm(list=ls())
-df <- read.csv("../DATA/cdc-age-sex.csv")
-df <- df[c(4:8)]
+df <- read.csv("./DATA/covid-sex-age.csv")
+# df <- df[c(:8)]
 colnames(df) <- c("Date","sex","Age","Deaths","Covid")
 df$Ymd <- substr(df$Date,1,10)
 df$Ymd <- as.Date(df$Date,format="%Y-%m-%d")
 summary(df$Deaths)
 summary(df$Covid)
-summary(df$Ymd)
 ```
 ```{r}
 All <- subset(df,Age =="All ages")
@@ -35,7 +34,7 @@ not_all <- subset(df,Age !="All ages")
 
 ```{r}
 not_age_week <- aggregate(Covid~Age+Ymd,data=not_all,FUN=sum)
-not_age_week <- subset(not_age_week,Ymd >="2020-08-25")
+not_age_week <- subset(not_age_week,Ymd >="2020-06-01")
 ```
 
 ### Plot of COVID-19 Deaths by Age Group
@@ -65,12 +64,24 @@ ggplot(mydata) +geom_line(aes(x=Ymd,y=Covid,col=Age)) +
 
 ```
 ```{r}
-Sept4 <- subset(not_age_week,Ymd >="2020-08-30")
+Sept4 <- subset(not_age_week,Ymd >="2020-09-11")
 ggplot(Sept4) + geom_col(aes(x=Age,y=Covid)) +
   theme(axis.text.x = element_text(angle = 45)) +
   labs(title = "Total Deaths by Age Group",
-  subtitle="for Week of Aug.30 - Sept. 4", caption = "(Source US CDC)"
+  subtitle="for Week ending  - Sept. 19", caption = "(Source US CDC)"
   )
 
+```
+```{r}
+AA <- subset(not_all,sex !="All Sex")
+```
+```{r}
+AB <- aggregate(Covid~sex+Ymd,data=AA,FUN=sum)
+ggplot(AB,aes(x=Ymd,y=Covid,fill=sex))  + 
+  labs(title="Comparing Male and Female COVI-19 Deaths by Month") +
+   geom_bar(stat = "identity", position = 'dodge')
+```
+```{r}
+AC <- aggregate(Covid~sex,data=AA,FUN=sum)
 ```
 

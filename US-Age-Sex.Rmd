@@ -14,7 +14,7 @@ library(lubridate)
 ```
 ```{r}
 rm(list=ls())
-CDCAge <- data.table::fread("../DATA/Provisional__Sex__Age.csv")
+CDCAge <- data.table::fread("./DATA/Provisional__Sex__Age.csv")
 CDCAge <- janitor::clean_names(CDCAge)
 
 ```
