@@ -2,26 +2,48 @@
 title: "Fun-w-Rtools40"
 author: "David Jackson"
 date: "8/30/2020"
-output: html_document
+output: 
+  html_document: 
+    fig_width: 9
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-```
-```{r}
-US_Age <- read.csv("../DATA/us_other.csv",header=FALSE)
-colnames(US_Age) <- c("Country","Sex","Age","Deaths" )
-```
-```{r}
-plot(US_Age$Deaths,US_Age$Ages,type="l")
-```
-
-```{r}
 library(ggplot2)
-
-ggplot(US_Age) + geom_col(aes(x=Age,y=Deaths,fill=Sex)) + coord_flip()
+library(scales)
 ```
 ```{r}
-ggplot(US_Age) + geom_col(aes(x=Sex,y=Deaths,fill=Age)) + coord_flip()
+WeeklyAge <- read.csv("./DATA/week_age_sex.csv")
+colnames(WeeklyAge) <-c("State","Date","Sex","Age","Deaths","COVID19")
+WeeklyAge$Ymd <- substr(WeeklyAge$Date,1,10)
+WeeklyAge$Ymd <- as.Date(WeeklyAge$Ymd)
+summary(WeeklyAge)
 ```
+
+###  All Ages by Date
+
+```{r}
+all_age <- subset(WeeklyAge,Age !="All Ages" & Sex=="All Sex")
+
+```
+```{r}
+ggplot(all_age) + geom_col(aes(x=Age,y=COVID19)) + coord_flip() +
+  labs(title="Total COVID19 Deaths by Age Group")
+```
+
+```{r}
+all_sex <- subset(WeeklyAge,Age !="All Ages")
+ggplot(all_sex) + geom_col(aes(x=Age,y=COVID19)) + coord_flip() +
+  labs(title="Total COVID19 Deaths by Age Group and Sex") +
+  facet_wrap(~Sex) + theme(axis.text.x = element_text(angle = 90))
+  
+```
+```{r}
+not_all_ages <- subset(all_sex, Age %in% c("55-64 years","65-74 years","75-84 years","85 years and over"))
+ggplot(not_all_ages) + geom_line(aes(x=Ymd,y=COVID19,col="Deaths")) + facet_wrap(~Age) +
+  labs(title="COVID19 Deaths by Week for Age Groups >= 55") +
+  geom_smooth(aes(x=Ymd,y=COVID19,col="Loess"),span=0.25)
+  
+```
+
 

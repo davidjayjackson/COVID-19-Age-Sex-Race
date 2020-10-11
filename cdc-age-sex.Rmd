@@ -1,7 +1,7 @@
 ---
 title: "COVID-19 by Week Age/Sex"
 author: "David Jackson"
-date: "9/13/2020"
+date: "Oct 6, 2020"
 output: 
   html_document: 
     fig_height: 7
@@ -19,28 +19,25 @@ theme_set(theme_linedraw())
 
 ```{r}
 rm(list=ls())
-df <- read.csv("./DATA/covid-sex-age.csv")
-# df <- df[c(:8)]
-colnames(df) <- c("Date","sex","Age","Deaths","Covid")
-df$Ymd <- substr(df$Date,1,10)
-df$Ymd <- as.Date(df$Date,format="%Y-%m-%d")
+df <- read.csv("./DATA/Weekly_Death_Counts__Sex__Age.csv")
+df$Week <- as.Date(df$Week,format="%Y-%m-%d")
 summary(df$Deaths)
-summary(df$Covid)
+summary(df$COVID19)
 ```
 ```{r}
-All <- subset(df,Age =="All ages")
-not_all <- subset(df,Age !="All ages")
+All <- subset(df,Age_Group =="All ages")
+not_all <- subset(df,Age_Group !="All ages")
 ```
 
 ```{r}
-not_age_week <- aggregate(Covid~Age+Ymd,data=not_all,FUN=sum)
-not_age_week <- subset(not_age_week,Ymd >="2020-06-01")
+not_age_week <- aggregate(COVID19~Age_Group+Week,data=not_all,FUN=sum)
+# not_age_week <- subset(not_age_week,Week >="2020-06-01")
 ```
 
 ### Plot of COVID-19 Deaths by Age Group
 
 ```{r}
-ggplot(not_age_week) +geom_line(aes(x=Ymd,y=Covid,col=Age)) +
+ggplot(not_age_week) +geom_line(aes(x=Week,y=COVID19,col=Age_Group)) +
   scale_x_date(date_breaks = "2 week") +
   theme(axis.text.x = element_text(angle = 45)) +
   labs(title="Plot of COVID-19 Deaths by Age Group",
@@ -49,13 +46,13 @@ ggplot(not_age_week) +geom_line(aes(x=Ymd,y=Covid,col=Age)) +
 
 ```
 ```{r}
-mydata = subset(not_age_week,Age %in% c("65-74 years","75-84 years","85 years and over"))
+mydata = subset(not_age_week,Age_Group %in% c("65-74 years","75-84 years","85 years and over"))
 ```
 
 # Plots by Selected Age Groups: 65 - 85 Year of Age
 
 ```{r}
-ggplot(mydata) +geom_line(aes(x=Ymd,y=Covid,col=Age)) +
+ggplot(mydata) +geom_line(aes(x=Week,y=COVID19,col=Age_Group)) +
   scale_x_date(date_breaks = "2 week") +
   theme(axis.text.x = element_text(angle = 45)) +
   labs(title="Plot of COVID-19 Deaths for Ages 64 and Over",
@@ -64,7 +61,7 @@ ggplot(mydata) +geom_line(aes(x=Ymd,y=Covid,col=Age)) +
 
 ```
 ```{r}
-Sept4 <- subset(not_age_week,Ymd >="2020-09-11")
+Sept4 <- subset(not_age_week,Week >="2020-09-11")
 ggplot(Sept4) + geom_col(aes(x=Age,y=Covid)) +
   theme(axis.text.x = element_text(angle = 45)) +
   labs(title = "Total Deaths by Age Group",
