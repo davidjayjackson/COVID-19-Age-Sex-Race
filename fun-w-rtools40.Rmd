@@ -39,7 +39,7 @@ ggplot(all_sex) + geom_col(aes(x=Age,y=COVID19)) + coord_flip() +
   
 ```
 ```{r}
-not_all_ages <- subset(all_sex, Age %in% c("55-64 years","65-74 years","75-84 years","85 years and over"))
+not_all_ages <- subset(all_sex, Age %in% c("55-64 years","65-74 years","75-84 years","85 years and over") & Ymd >="2020-03-01")
 ggplot(not_all_ages) + geom_line(aes(x=Ymd,y=COVID19,col="Deaths")) + facet_wrap(~Age) +
   labs(title="COVID19 Deaths by Week for Age Groups >= 55") +
   geom_smooth(aes(x=Ymd,y=COVID19,col="Loess"),span=0.25)
