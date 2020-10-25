@@ -1,7 +1,7 @@
 ---
 title: 'US COVID-19 by Age Groups'
 author: "David J Jackson"
-date: "June 29, 2020 16:25 UD/UT"
+date: "Oct. 25, 2020 16:25 UD/UT"
 output: html_document
 ---
 
@@ -14,7 +14,7 @@ library(lubridate)
 ```
 ```{r}
 rm(list=ls())
-CDCAge <- data.table::fread("./DATA/Provisional__Sex__Age.csv")
+CDCAge <- data.table::fread("./DATA/State_Sex__Age.csv")
 CDCAge <- janitor::clean_names(CDCAge)
 
 ```
@@ -27,15 +27,16 @@ US <- grep("United States",CDCAge)
 ```{r}
 CDCAge %>% filter(age_group != "All ages" & sex != "All") %>%
 ggplot() + geom_col(aes(x=age_group,y=total_deaths)) +
-  theme(axis.text.x = element_text(angle = 90)) +
+  theme(axis.text.x = element_text(angle = 45)) +
   labs(title="Total Deaths by Age Group",x="Age Group",y="Total Deaths") 
+  
   
 ```
 ```{r}
 CDCAge %>% filter(age_group != "All ages" & sex != "All") %>%
 ggplot() + geom_col(aes(x=age_group,y=total_deaths/sum(total_deaths,na.rm=TRUE))) +
-  theme(axis.text.x = element_text(angle = 90)) + 
+  theme(axis.text.x = element_text(angle = 45)) + 
   scale_y_continuous(labels=percent) +
-  labs(title="Deaths by Age Group as Percentage",x="Age Group",y="% of Age")
+  labs(title="Deaths by Age Group as Percentage",x="Age Group",y="% of Age") 
 ```
 
