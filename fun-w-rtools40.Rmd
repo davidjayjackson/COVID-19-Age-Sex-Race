@@ -54,4 +54,29 @@ ggplot(not_all_ages) + geom_line(aes(x=Date,y=Covid19,col="Deaths")) + facet_wra
   
 ```
 
+### Total Deaths and Percentage of Deaths by Age Group
+
+```{r}
+rm(list=ls())
+CDCAge <- data.table::fread("./DATA/State_Sex__Age.csv")
+CDCAge <- janitor::clean_names(CDCAge)
+
+```
+
+```{r}
+# CDCAge %>% filter(age_group != "All Ages" & sex != "All") %>%
+# ggplot() + geom_col(aes(x=age_group,y=total_deaths)) +
+#   theme(axis.text.x = element_text(angle = 45)) +
+#   labs(title="Total Deaths by Age Group",x="Age Group",y="Total Deaths") +
+#   scale_y_continuous(labels = scales::comma)
+#   
+  
+```
+```{r}
+CDCAge %>% filter(age_group != "All Ages" & sex != "All") %>%
+ggplot() + geom_col(aes(x=age_group,y=total_deaths/sum(total_deaths,na.rm=TRUE))) +
+  theme(axis.text.x = element_text(angle = 45)) + 
+  scale_y_continuous(labels=percent) +
+  labs(title="Deaths by Age Group as Percentage",x="Age Group",y="% of Age") 
+```
 
