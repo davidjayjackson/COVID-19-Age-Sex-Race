@@ -1,7 +1,7 @@
 ---
 title: "Fun-w-Rtools40"
 author: "David Jackson"
-date: "Oct. 24,2020"
+date: "Oct. 30,2020"
 output: 
   html_document: 
     fig_width: 10
@@ -25,7 +25,8 @@ WeeklyAge <- WeeklyAge %>% select(state,end_week,sex,age_group,total_deaths,covi
 colnames(WeeklyAge) <- c("State","Date","Sex","Age","Deaths","Covid19")
 WeeklyAge$Date <- gsub("/","-",WeeklyAge$Date)
 WeeklyAge$Date <- as.Date(WeeklyAge$Date,format="%m-%d-%Y")
-summary(WeeklyAge)
+mean(WeeklyAge$Deaths)
+mean(WeeklyAge$Covid19)
 ```
 
 ###  All Ages by Date
