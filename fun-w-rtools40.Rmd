@@ -1,7 +1,7 @@
 ---
 title: "Fun-w-Rtools40"
 author: "David Jackson"
-date: "Oct. 30,2020"
+date: "Nov. 01, 2020"
 output: 
   html_document: 
     fig_width: 10
@@ -25,8 +25,8 @@ WeeklyAge <- WeeklyAge %>% select(state,end_week,sex,age_group,total_deaths,covi
 colnames(WeeklyAge) <- c("State","Date","Sex","Age","Deaths","Covid19")
 WeeklyAge$Date <- gsub("/","-",WeeklyAge$Date)
 WeeklyAge$Date <- as.Date(WeeklyAge$Date,format="%m-%d-%Y")
-mean(WeeklyAge$Deaths)
-mean(WeeklyAge$Covid19)
+#mean(WeeklyAge$Deaths)
+#mean(WeeklyAge$Covid19)
 ```
 
 ###  All Ages by Date
@@ -36,13 +36,25 @@ all_age <- subset(WeeklyAge,Age !="All Ages" & Sex=="All Sex")
 
 ```
 ```{r}
-ggplot(all_age) + geom_col(aes(x=Age,y=Covid19)) + coord_flip() +
+ggplot(all_age) + geom_col(aes(x=reorder(Age,Covid19),y=Covid19)) + coord_flip() +
   labs(title="Total COVID19 Deaths by Age Group")
+```
+
+### Total Deaths and Percentage of Deaths by Age Group
+
+```{r}
+CDCAge <- data.table::fread("./DATA/State_Sex__Age.csv")
+CDCAge <- janitor::clean_names(CDCAge)
+CDCAge %>% filter(age_group != "All Ages" & sex != "All") %>%
+ggplot() + geom_col(aes(x=age_group,y=total_deaths/sum(total_deaths,na.rm=TRUE))) +
+  theme(axis.text.x = element_text(angle = 45)) + 
+  scale_y_continuous(labels=percent) + coord_flip() +
+  labs(title="Deaths by Age Group as Percentage",x="Age Group",y="% of Age") 
 ```
 
 ```{r}
 all_sex <- subset(WeeklyAge,Age !="All Ages")
-ggplot(all_sex) + geom_col(aes(x=Age,y=Covid19)) + coord_flip() +
+ggplot(all_sex) + geom_col(aes(x=reorder(Age,Covid19),y=Covid19)) + coord_flip() +
   labs(title="Total COVID19 Deaths by Age Group and Sex") +
   facet_wrap(~Sex) + theme(axis.text.x = element_text(angle = 90))
   
@@ -55,14 +67,9 @@ ggplot(not_all_ages) + geom_line(aes(x=Date,y=Covid19,col="Deaths")) + facet_wra
   
 ```
 
-### Total Deaths and Percentage of Deaths by Age Group
 
-```{r}
-rm(list=ls())
-CDCAge <- data.table::fread("./DATA/State_Sex__Age.csv")
-CDCAge <- janitor::clean_names(CDCAge)
 
-```
+
 
 ```{r}
 # CDCAge %>% filter(age_group != "All Ages" & sex != "All") %>%
@@ -73,11 +80,5 @@ CDCAge <- janitor::clean_names(CDCAge)
 #   
   
 ```
-```{r}
-CDCAge %>% filter(age_group != "All Ages" & sex != "All") %>%
-ggplot() + geom_col(aes(x=age_group,y=total_deaths/sum(total_deaths,na.rm=TRUE))) +
-  theme(axis.text.x = element_text(angle = 45)) + 
-  scale_y_continuous(labels=percent) +
-  labs(title="Deaths by Age Group as Percentage",x="Age Group",y="% of Age") 
-```
+`
 
