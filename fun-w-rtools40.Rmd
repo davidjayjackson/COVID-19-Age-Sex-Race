@@ -85,4 +85,25 @@ ggplot(not_all_ages) + geom_line(aes(x=Date,y=Covid19,col="Deaths")) + facet_wra
   
 ```
 `
+#### COVID-19 Deaths as a Precent of All Deaths 
+
+```{r}
+all_all <- subset(WeeklyAge,Age =="All Ages" & Sex=="All Sex")
+all_all$Percent <- all_all$Covid19/all_all$Deaths
+ggplot(all_all) + geom_line(aes(x=Date,y=Percent),col="red") +
+  scale_y_continuous(labels=percent) +
+  labs(title="CovID-19 Deaths As a Percent of Total Deaths",y="Percent of Total Deaths",caption="[Source: http://cdc.gov]")
+  
+```
+
+#### Plot of Both Total Deaths and Covid19 Deaths
+
+```{r}
+ggplot(all_all) + geom_line(aes(x=Date,y=Deaths,col="Total Deaths")) +
+  geom_line(aes(x=Date,y=Covid19,col="Covid19 Deaths")) +
+  labs(title="Weekly: Total Deaths and Covid19 Deaths")
+```
+
+
+
 
