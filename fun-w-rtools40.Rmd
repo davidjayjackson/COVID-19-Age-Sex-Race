@@ -71,10 +71,6 @@ ggplot(not_all_ages) + geom_line(aes(x=Date,y=Covid19,col="Deaths")) + facet_wra
   
 ```
 
-
-
-
-
 ```{r}
 # CDCAge %>% filter(age_group != "All Ages" & sex != "All") %>%
 # ggplot() + geom_col(aes(x=age_group,y=total_deaths)) +
@@ -97,11 +93,14 @@ ggplot(all_all) + geom_line(aes(x=Date,y=Percent),col="red") +
 ```
 
 #### Plot of Both Total Deaths and Covid19 Deaths
+* Heart disease: 655,381.
+* Cancer: 599,274.
 
 ```{r}
 ggplot(all_all) + geom_line(aes(x=Date,y=Deaths,col="Total Deaths")) +
   geom_line(aes(x=Date,y=Covid19,col="Covid19 Deaths")) +
-  labs(title="Weekly: Total Deaths and Covid19 Deaths")
+  labs(title="Weekly: Total Deaths and Covid19 Deaths",
+       caption="[Source: http://cdc.gov]")
 ```
 
 
