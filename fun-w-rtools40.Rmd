@@ -1,7 +1,7 @@
 ---
-title: "Fun-w-Rtools40"
+title: "Total Covidi19 Deaths by Age and Sex"
 author: "David Jackson"
-date: "Nov. 01, 2020"
+date: "Nov. 08, 2020"
 output: 
   html_document: 
     fig_width: 10
@@ -11,15 +11,16 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,message = FALSE,error = FALSE)
 library(ggplot2)
+library(plotly)
 library(scales)
 library(dplyr)
 library(tidyr)
 library(readr)
-
+theme_set(theme_linedraw() + theme(panel.grid = element_line(linetype = 'dashed')))
 ```
 ```{r}
 rm(list=ls())
-WeeklyAge <- read_csv("./DATA/Week_Sex__Age.csv")
+WeeklyAge <- read_csv("./DATA/Week-Sex-Age.csv")
 WeeklyAge <-janitor::clean_names(WeeklyAge)
 WeeklyAge <- WeeklyAge %>% select(state,end_week,sex,age_group,total_deaths,covid_19_deaths)
 colnames(WeeklyAge) <- c("State","Date","Sex","Age","Deaths","Covid19")
@@ -29,11 +30,19 @@ WeeklyAge$Date <- as.Date(WeeklyAge$Date,format="%m-%d-%Y")
 #mean(WeeklyAge$Covid19)
 ```
 
-## Source: US Center for Disease  Control and Prevention
-###  All Ages by Date
+### Total Covidi19 Deaths by Age and Sex
+#### Source: US Center for Disease  Control and Prevention
+####  All Ages by Date
+
 
 ```{r}
 all_age <- subset(WeeklyAge,Age !="All Ages" & Sex=="All Sex")
+``` 
+```{r}
+sex_totals <-subset(WeeklyAge,Age !="All Ages" & Sex !="All Sex")
+ggplot(sex_totals) + geom_col(aes(x=Sex,y=Covid19)) +
+  labs(title="Total Deaths by Sex",subtitle="(As of Oct. 24, 2020",
+       caption="[Source: http://www.cdc.gov]")
 
 ```
 ```{r}
@@ -44,7 +53,7 @@ ggplot(all_age) + geom_col(aes(x=reorder(Age,Covid19),y=Covid19)) + coord_flip()
 ### Total Deaths and Percentage of Deaths by Age Group
 
 ```{r}
-CDCAge <- data.table::fread("./DATA/State_Sex__Age.csv")
+CDCAge <- data.table::fread("./DATA/State-Sex-Age.csv")
 CDCAge <- janitor::clean_names(CDCAge)
 CDCAge %>% filter(age_group != "All Ages" & sex != "All") %>%
 ggplot() + geom_col(aes(x=age_group,y=total_deaths/sum(total_deaths,na.rm=TRUE))) +
@@ -95,12 +104,20 @@ ggplot(all_all) + geom_line(aes(x=Date,y=Percent),col="red") +
 #### Plot of Both Total Deaths and Covid19 Deaths
 * Heart disease: 655,381.
 * Cancer: 599,274.
+* 230548 (US Covid19 Deaths as of Nov. 1, 2020)
 
 ```{r}
 ggplot(all_all) + geom_line(aes(x=Date,y=Deaths,col="Total Deaths")) +
   geom_line(aes(x=Date,y=Covid19,col="Covid19 Deaths")) +
   labs(title="Weekly: Total Deaths and Covid19 Deaths",
+       caption="[Source: http://cdc.gov]",y="Weekly Deaths (Log10)") +
+  scale_y_log10()
+
+ggplot(all_all) + geom_line(aes(x=Date,y=Deaths,col="Total Deaths")) +
+  geom_line(aes(x=Date,y=Covid19,col="Covid19 Deaths")) +
+  labs(title="Weekly: Total Deaths and Covid19 Deaths",
        caption="[Source: http://cdc.gov]")
+  
 ```
 
 
