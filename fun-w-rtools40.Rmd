@@ -1,7 +1,7 @@
 ---
 title: "Total Covidi19 Deaths by Age and Sex"
 author: "David Jackson"
-date: "Nov. 08, 2020"
+date: "Nov. 26, 2020"
 output: 
   html_document: 
     fig_width: 10
@@ -20,7 +20,7 @@ theme_set(theme_linedraw() + theme(panel.grid = element_line(linetype = 'dashed'
 ```
 ```{r}
 rm(list=ls())
-WeeklyAge <- read_csv("./DATA/Week_by_Sex__Age.csv")
+WeeklyAge <- read_csv("./DATA/Week_Sex__Age.csv")
 WeeklyAge <-janitor::clean_names(WeeklyAge)
 WeeklyAge <- WeeklyAge %>% select(state,end_week,sex,age_group,total_deaths,covid_19_deaths)
 colnames(WeeklyAge) <- c("State","Date","Sex","Age","Deaths","Covid19")
@@ -54,7 +54,7 @@ ggplot(all_age) + geom_col(aes(x=reorder(Age,Covid19),y=Covid19)) + coord_flip()
 ### Total Deaths and Percentage of Deaths by Age Group
 
 ```{r}
-CDCAge <- data.table::fread("./DATA/State-by_Sex__Age.csv")
+CDCAge <- data.table::fread("./DATA/State_Sex__Age.csv")
 CDCAge <- janitor::clean_names(CDCAge)
 CDCAge %>% filter(age_group != "All Ages" & sex != "All") %>%
 ggplot() + geom_col(aes(x=age_group,y=total_deaths/sum(total_deaths,na.rm=TRUE))) +
