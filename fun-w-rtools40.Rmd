@@ -1,7 +1,7 @@
 ---
 title: "Total Covidi19 Deaths by Age and Sex"
 author: "David Jackson"
-date: "Nov. 26, 2020"
+date: "Nov. 28, 2020"
 output: 
   html_document: 
     fig_width: 10
@@ -20,14 +20,14 @@ theme_set(theme_linedraw() + theme(panel.grid = element_line(linetype = 'dashed'
 ```
 ```{r}
 rm(list=ls())
-WeeklyAge <- read_csv("./DATA/Week_Sex__Age.csv")
-WeeklyAge <-janitor::clean_names(WeeklyAge)
-WeeklyAge <- WeeklyAge %>% select(state,end_week,sex,age_group,total_deaths,covid_19_deaths)
-colnames(WeeklyAge) <- c("State","Date","Sex","Age","Deaths","Covid19")
+WeeklyAge <- read_csv("./DATA/Week_Death_by_Sex__Age.csv")
+# WeeklyAge <-janitor::clean_names(WeeklyAge)
+# WeeklyAge <- WeeklyAge %>% select(sex,Age,Total,COVID19)
+# colnames(WeeklyAge) <- c("State","Date","Sex","Age","Deaths","COVID19")
 WeeklyAge$Date <- gsub("/","-",WeeklyAge$Date)
 WeeklyAge$Date <- as.Date(WeeklyAge$Date,format="%m-%d-%Y")
 #mean(WeeklyAge$Deaths)
-#mean(WeeklyAge$Covid19)
+#mean(WeeklyAge$COVID19)
 ```
 
 ### Total Covidi19 Deaths by Age and Sex
@@ -40,24 +40,25 @@ all_age <- subset(WeeklyAge,Age !="All Ages" & Sex=="All Sex")
 ``` 
 ```{r}
 sex_totals <-subset(WeeklyAge,Age !="All Ages" & Sex !="All Sex")
-ggplot(sex_totals) + geom_col(aes(x=Sex,y=Covid19)) +
-  labs(title="Total Deaths by Sex",subtitle="(As of Oct. 24, 2020",
+ggplot(sex_totals) + geom_col(aes(x=Sex,y=COVID19)) +
+  labs(title="Total Deaths by Sex",subtitle="(As of Nov. 26, 2020",
        caption="[Source: http://www.cdc.gov]") +
   scale_y_continuous(labels = comma)
 
 ```
 ```{r}
-ggplot(all_age) + geom_col(aes(x=reorder(Age,Covid19),y=Covid19)) + coord_flip() +
+ggplot(all_age) + geom_col(aes(x=reorder(Age,COVID19),y=COVID19)) + coord_flip() +
   labs(title="Total COVID19 Deaths by Age Group",caption="(Source http://www.cdc.gov)")
 ```
 
 ### Total Deaths and Percentage of Deaths by Age Group
 
 ```{r}
-CDCAge <- data.table::fread("./DATA/State_Sex__Age.csv")
+CDCAge <- data.table::fread("./DATA/State_by_Sex__Age.csv")
 CDCAge <- janitor::clean_names(CDCAge)
-CDCAge %>% filter(age_group != "All Ages" & sex != "All") %>%
-ggplot() + geom_col(aes(x=age_group,y=total_deaths/sum(total_deaths,na.rm=TRUE))) +
+
+CDCAge %>% filter(age != "All Ages" & sex != "All") %>%
+ggplot() + geom_col(aes(x=age,y=total/sum(total,na.rm=TRUE))) +
   theme(axis.text.x = element_text(angle = 45)) + 
   scale_y_continuous(labels=percent) + coord_flip() +
   labs(title="Deaths by Age Group as Percentage",x="Age Group",y="% of Age",
@@ -66,7 +67,7 @@ ggplot() + geom_col(aes(x=age_group,y=total_deaths/sum(total_deaths,na.rm=TRUE))
 
 ```{r}
 all_sex <- subset(WeeklyAge,Age !="All Ages")
-ggplot(all_sex) + geom_col(aes(x=reorder(Age,Covid19),y=Covid19)) + coord_flip() +
+ggplot(all_sex) + geom_col(aes(x=reorder(Age,COVID19),y=COVID19)) + coord_flip() +
   labs(title="Total COVID19 Deaths by Age Group and Sex",
        caption="(Source http://www.cdc.gov") +
   facet_wrap(~Sex) + theme(axis.text.x = element_text(angle = 90))
@@ -74,10 +75,10 @@ ggplot(all_sex) + geom_col(aes(x=reorder(Age,Covid19),y=Covid19)) + coord_flip()
 ```
 ```{r}
 not_all_ages <- subset(all_sex, Age %in% c("55-64 years","65-74 years","75-84 years","85 years and over") & Date >="2020-03-01")
-ggplot(not_all_ages) + geom_line(aes(x=Date,y=Covid19,col="Deaths")) + facet_wrap(~Age,ncol=2) +
+ggplot(not_all_ages) + geom_line(aes(x=Date,y=COVID19,col="Deaths")) + facet_wrap(~Age,ncol=2) +
   labs(title="COVID19 Deaths by Week for Age Groups >= 55",
        caption="(Source http://cdc.gov)") +
-  geom_smooth(aes(x=Date,y=Covid19,col="Loess"),span=0.25)
+  geom_smooth(aes(x=Date,y=COVID19,col="Loess"),span=0.25)
   
 ```
 
@@ -95,37 +96,37 @@ ggplot(not_all_ages) + geom_line(aes(x=Date,y=Covid19,col="Deaths")) + facet_wra
 
 ```{r}
 all_all <- subset(WeeklyAge,Age =="All Ages" & Sex=="All Sex")
-all_all$Percent <- all_all$Covid19/all_all$Deaths
+all_all$Percent <- all_all$COVID19/all_all$Total
 ggplot(all_all) + geom_line(aes(x=Date,y=Percent),col="red") +
   scale_y_continuous(labels=percent) +
   labs(title="CovID-19 Deaths As a Percent of Total Deaths",y="Percent of Total Deaths",caption="[Source: http://cdc.gov]")
   
 ```
 
-#### Plot of Both Total Deaths and Covid19 Deaths
+#### Plot of Both Total Deaths and COVID19 Deaths
 * Heart disease: 655,381.
 * Cancer: 599,274.
-* 230548 (US Covid19 Deaths as of Nov. 1, 2020)
+* 230548 (US COVID19 Deaths as of Nov. 1, 2020)
 
 ```{r}
-ggplot(all_all) + geom_line(aes(x=Date,y=Deaths,col="Total Deaths")) +
-  geom_line(aes(x=Date,y=Covid19,col="Covid19 Deaths")) +
-  labs(title="Weekly: Total Deaths and Covid19 Deaths",
+ggplot(all_all) + geom_line(aes(x=Date,y=Total,col="Total Deaths")) +
+  geom_line(aes(x=Date,y=COVID19,col="COVID19 Deaths")) +
+  labs(title="Weekly: Total Deaths and COVID19 Deaths",
        caption="[Source: http://cdc.gov]",y="Weekly Deaths (Log10)") +
   scale_y_log10()
 
-ggplot(all_all) + geom_line(aes(x=Date,y=Deaths,col="Total Deaths")) +
-  geom_line(aes(x=Date,y=Covid19,col="Covid19 Deaths")) +
-  labs(title="Weekly: Total Deaths and Covid19 Deaths",
+ggplot(all_all) + geom_line(aes(x=Date,y=Total,col="Total Deaths")) +
+  geom_line(aes(x=Date,y=COVID19,col="COVID19 Deaths")) +
+  labs(title="Weekly: Total Deaths and COVID19 Deaths",
        caption="[Source: http://cdc.gov]")
   
 ```
 ```{r}
 not_all_ages <- subset(all_sex, Age %in% c("5-14 years","15-24 years","25-34 years","35-44 years","45-54 years") & Date >="2020-03-01")
-ggplot(not_all_ages) + geom_line(aes(x=Date,y=Covid19,col="Deaths")) + facet_wrap(~Age,ncol=2) +
-  labs(title="COVID19 Deaths by Week for Age Groups >= 55",
+ggplot(not_all_ages) + geom_line(aes(x=Date,y=COVID19,col="Deaths")) + facet_wrap(~Age,ncol=2) +
+  labs(title="COVID19 Deaths by Week for Age Groups =< 55",
        caption="(Source http://cdc.gov)") +
-  geom_smooth(aes(x=Date,y=Covid19,col="Loess"),span=0.25) 
+  geom_smooth(aes(x=Date,y=COVID19,col="Loess"),span=0.25) 
   
   
 ```
