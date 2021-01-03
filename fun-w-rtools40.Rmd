@@ -1,7 +1,7 @@
 ---
 title: "Total Covidi19 Deaths by Age and Sex"
 author: "David Jackson"
-date: "Dec. 17 3:30PM EST, 2020"
+date: "2021/01/03 5:45PM EST, 2021"
 output: 
   html_document: 
     fig_width: 10
@@ -21,7 +21,7 @@ theme_set(theme_linedraw() + theme(panel.grid = element_line(linetype = 'dashed'
 ```{r}
 rm(list=ls())
 WeeklyAge <- read_csv("./DATA/Weekly_by_Sex__Age.csv")
-WeeklyAge$Date <- gsub("/","-",WeeklyAge$Date)
+#$WeeklyAge$Date <- gsub("/","-",WeeklyAge$Date)
 WeeklyAge$Date <- as.Date(WeeklyAge$Date,format="%m-%d-%Y")
 
 ```
@@ -50,11 +50,12 @@ ggplot(all_age) + geom_col(aes(x=reorder(Age,COVID19),y=COVID19)) + coord_flip()
 ### Total Deaths and Percentage of Deaths by Age Group
 
 ```{r}
-CDCAge <- data.table::fread("./DATA/States_Sex__Age.csv")
+CDCAge <- data.table::fread("./DATA/State_by_Sex__Age.csv")
+CDCAge$Date <- as.Date(CDCAge$Date,format="%m-%d-%Y")
 # CDCAge <- janitor::clean_names(CDCAge)
 
 CDCAge %>% filter(Age != "All Ages" & Sex != "All") %>%
-ggplot() + geom_col(aes(x=Age,y=Total/sum(Total,na.rm=TRUE))) +
+ggplot() + geom_col(aes(x=Age,y=Deaths/sum(Deaths,na.rm=TRUE))) +
   theme(axis.text.x = element_text(angle = 45)) + 
   scale_y_continuous(labels=percent) + coord_flip() +
   labs(title="Deaths by Age Group as Percentage",x="Age Group",y="% of Age",
@@ -92,7 +93,7 @@ ggplot(not_all_ages) + geom_line(aes(x=Date,y=COVID19,col="Deaths")) + facet_wra
 
 ```{r}
 all_all <- subset(WeeklyAge,Age =="All Ages" & Sex=="All Sex")
-all_all$Percent <- all_all$COVID19/all_all$Total
+all_all$Percent <- all_all$COVID19/all_all$Deaths
 ggplot(all_all) + geom_line(aes(x=Date,y=Percent),col="red") +
   scale_y_continuous(labels=percent) +
   labs(title="CovID-19 Deaths As a Percent of Total Deaths",y="Percent of Total Deaths",caption="[Source: http://cdc.gov]")
@@ -102,16 +103,16 @@ ggplot(all_all) + geom_line(aes(x=Date,y=Percent),col="red") +
 #### Plot of Both Total Deaths and COVID19 Deaths
 * Heart disease: 655,381.
 * Cancer: 599,274.
-* 230548 (US COVID19 Deaths as of Nov. 1, 2020)
+* 350,186 (US COVID19 Deaths as of Nov. 1, 2020)
 
 ```{r}
-ggplot(all_all) + geom_line(aes(x=Date,y=Total,col="Total Deaths")) +
+ggplot(all_all) + geom_line(aes(x=Date,y=Deaths,col="Total Deaths")) +
   geom_line(aes(x=Date,y=COVID19,col="COVID19 Deaths")) +
   labs(title="Weekly: Total Deaths and COVID19 Deaths",
        caption="[Source: http://cdc.gov]",y="Weekly Deaths (Log10)") +
   scale_y_log10() + scale_y_continuous(labels=comma)
 
-ggplot(all_all) + geom_line(aes(x=Date,y=Total,col="Total Deaths")) +
+ggplot(all_all) + geom_line(aes(x=Date,y=Deaths,col="Total Deaths")) +
   geom_line(aes(x=Date,y=COVID19,col="COVID19 Deaths")) +
   labs(title="Weekly: Total Deaths and COVID19 Deaths",
        caption="[Source: http://cdc.gov]")
@@ -130,7 +131,7 @@ ggplot(not_all_ages) + geom_line(aes(x=Date,y=COVID19,col="Deaths")) + facet_wra
 #### Deaths for Last Seven Days
 
 ```{r}
-all_age %>% filter(Date >="2020-12-19") %>%
+all_age %>% filter(Date >="2020-12-26") %>%
 ggplot() + geom_col(aes(x=reorder(Age,COVID19),y=COVID19)) + coord_flip() +
   labs(title="Total COVID19 Deaths by Age Group",caption="(Source http://www.cdc.gov)")
 ```
