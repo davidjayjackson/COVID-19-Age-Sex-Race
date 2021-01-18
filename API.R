@@ -1,0 +1,6 @@
+# library(dplyr)
+# library(httr)
+# library(jsonlite)
+rm(list=ls())
+df <- data.table::fread("https://data.cdc.gov/resource/vsak-wrfu.csv")
+db <- read.csv("https://data.cdc.gov/resource/vsak-wrfu.csv")
