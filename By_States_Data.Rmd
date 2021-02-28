@@ -1,0 +1,30 @@
+---
+title: 'US COVID-19: By State Data'
+author: "David Jackson"
+date: "1/21/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(scales)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+```
+
+## US CDC COVID19 By State
+* https://data.cdc.gov/NCHS/Provisional-COVID-19-Death-Counts-by-Sex-Age-and-S/9bhg-hcku
+
+```{r}
+rm(list=ls())
+states_data <- readr::read_csv("./DATA/State_Sex__Age.csv") %>%
+  rename("Date" = "End Date")
+
+states_data$Date <- as.Date(states_data$Date,format="%m-%d-%Y")
+```
+```{r}
+percent_deaths <- states_data$COVID19/states_data$Deaths
+```
+

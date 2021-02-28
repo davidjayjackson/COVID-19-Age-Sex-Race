@@ -24,6 +24,7 @@ df <- clean_names(df)
 colnames(df) <- c("County","ID","Year","ages_under_5","ages_5_14",
                   "ages_15_49","ages_50_69","ages_70")
 ```
+
 ## Plot Total Pneumonia Deaths by Year
 
 ```{r}

@@ -1,7 +1,7 @@
 ---
 title: "Total Covidi19 Deaths by Age and Sex"
 author: "David Jackson"
-date: "2021/01/24 6:30 PM/EST, 2021"
+date: "2021/02/28 5:00 PM/EST"
 output: 
   html_document: 
     fig_width: 10
@@ -45,7 +45,7 @@ all_age <- subset(WeeklyAge,Age !="All Ages" & Sex=="All Sex")
 ```{r}
 sex_totals <-subset(WeeklyAge,Age !="All Ages" & Sex !="All Sex")
 ggplot(sex_totals) + geom_col(aes(x=Sex,y=COVID19)) +
-  labs(title="Total Deaths by Sex",subtitle="(As of Jan. 30, 2020)",
+  labs(title="Total Deaths by Sex",subtitle="(As of Feb. 20, 2020)",
        caption="[Source: http://www.cdc.gov]") +
   scale_y_continuous(labels = comma)
 
@@ -59,7 +59,7 @@ ggplot(all_age) + geom_col(aes(x=reorder(Age,COVID19),y=COVID19)) + coord_flip()
 ### Total Deaths and Percentage of Deaths by Age Group
 
 ```{r}
-CDCAge <- data.table::fread("./DATA/State_by_Sex__Age.csv")
+CDCAge <- data.table::fread("./DATA/States_by_Sex__Age.csv")
 CDCAge <- CDCAge %>%janitor::clean_names() %>%
   select(end_date,state,sex,age_group,covid_19_deaths,
         total_deaths,pneumonia_deaths,influenza_deaths )
@@ -154,9 +154,9 @@ ggplot(not_all_ages) + geom_line(aes(x=EndDate,y=COVID19,col="Deaths")) + facet_
 #### Deaths for Last Seven Days
 
 ```{r}
-all_age %>% filter(EndDate >="2021-01-30") %>%
+all_age %>% filter(EndDate =="2021-02-20") %>%
 ggplot() + geom_col(aes(x=reorder(Age,COVID19),y=COVID19)) + coord_flip() +
-  labs(title="Total COVID19 Deaths by Age Group",subtitle="(Date >=2021-01-30)"
+  labs(title="Total COVID19 Deaths by Age Group",subtitle="(Date ==2021-02-20)"
        ,caption="(Source http://www.cdc.gov)")
 ```
 
